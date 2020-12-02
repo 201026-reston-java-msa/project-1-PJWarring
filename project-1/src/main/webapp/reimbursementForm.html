@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Create Reimbursement</title>
+	<link rel="stylesheet" href="styles/navBar.css">
+</head>
+<body>
+	<nav>
+		<h2 id="navigationWelcomePage">Welcome Manager</h2>
+		<a href="./home">Home</a>
+		<a href="./new_reimbursement" id="selectedPage">Create New Reimbursement</a>
+		<a href="pendingReimbursements.html">Review Pending Reimbursements</a>
+		<a href="viewResolvedReimbursements.html">View Resolved Reimbursements</a>
+		<a href="viewEmployees.html">View Employees</a>
+		<a href="./logout" id="logoutLink">Logout</a>
+	</nav>
+	<main>
+		<form class="displayDiv" action="new_reimbursement" method="post">
+			<fieldset>
+				<legend>Amount:</legend>
+				<input required type="number" name="amount" min="0" step="0.01"/>
+			</fieldset>
+			<fieldset>
+				<legend>Description:</legend>
+				<textarea required name="description" maxlength="250"></textarea>
+			</fieldset>
+			<fieldset>
+				<legend>Type:</legend>
+				<input type="radio" name="type" value="Lodging" required>Lodging
+				<input type="radio" name="type" value="Travel">Travel
+				<input type="radio" name="type" value="Food">Food
+				<input type="radio" name="type" value="Other">Other
+			</fieldset>
+			<!-- uncomment to accept images for receipts
+			<fieldset>
+				<legend>Receipt</legend>
+				<input type="file" id="img" name="receipt" accept="image/*">
+			</fieldset>
+			-->
+			<br />
+			<input type="submit" value="Create New Reimbursement"/>
+		</form>
+		
+		<!--
+		reimbursmentid serial primary key,
+		amount double precision not null,
+		submitted timestamp handled by database
+		resolved timestamp handled by database
+		description varchar(250) not null,
+		--receipt field would go here
+		author auto selected by users
+		resolver handled later
+		status handled by database
+		type readio buttons
+
+		(status) values ('Pending'), ('Approved'), ('Denied')
+		(type) values ('Lodging'), ('Travel'), ('Food'), ('Other')
+		-->
+	</main>
+</body>
+</html>
