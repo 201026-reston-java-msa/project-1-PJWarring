@@ -2,6 +2,8 @@ package com.revature.dao;
 
 import java.util.List;
 
+import javax.persistence.Query;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -43,5 +45,13 @@ public class TypeDaoImpl {
 		return typeList.get(0);
 	}
 	
-	public boolean delete(Type type) {return false;}
+	public boolean delete(Type type) {
+		Session ses = HibernateUtil.getSession();
+		Transaction transaction = ses.beginTransaction();
+		Query query = ses.createQuery("delete Type where id = :ID");
+		query.setParameter("ID", type.getTypeid());
+		query.executeUpdate();
+		transaction.commit();
+		return true;
+	}
 }

@@ -2,6 +2,8 @@ package com.revature.dao;
 
 import java.util.List;
 
+import javax.persistence.Query;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -42,5 +44,13 @@ public class StatusDaoImpl {
 		return statusList.get(0);
 	}
 	
-	public boolean delete(Status status) {return false;}
+	public boolean delete(Status status) {
+		Session ses = HibernateUtil.getSession();
+		Transaction transaction = ses.beginTransaction();
+		Query query = ses.createQuery("delete Status where id = :ID");
+		query.setParameter("ID", status.getStatusid());
+		query.executeUpdate();
+		transaction.commit();
+		return true;
+	}
 }

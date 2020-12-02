@@ -2,6 +2,8 @@ package com.revature.dao;
 
 import java.util.List;
 
+import javax.persistence.Query;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -41,8 +43,23 @@ public class UserDaoImpl {
 		if(userList.size()==0) return null;
 		return userList.get(0);
 	}
+
+	public boolean update(User user) {
+		Session ses = HibernateUtil.getSession();
+		
+		Transaction tx = ses.beginTransaction();
+		ses.update(user);
+		tx.commit();
+		return true;
+	}
 	
-	//TODO
-	public boolean update(User user) {return false;}
-	public boolean delete(User user) {return false;}
+	public boolean delete(User user) {
+		Session ses = HibernateUtil.getSession();
+		Transaction transaction = ses.beginTransaction();
+		Query query = ses.createQuery("delete User where id = :ID");
+		query.setParameter("ID", user.getUserid());
+		query.executeUpdate();
+		transaction.commit();
+		return true;
+	}
 }

@@ -3,6 +3,8 @@ package com.revature.dao;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.persistence.Query;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.postgresql.util.PGTimestamp;
@@ -31,13 +33,29 @@ public class ReimbursementDaoImpl {
 	public Reimbursement selectById(int id) {
 		Session ses = HibernateUtil.getSession();
 		
-		List<Reimbursement> reimbursmentList = ses.createQuery("from Reimbursment where reimbursmentid = " + id, Reimbursement.class).list();
+		List<Reimbursement> reimbursmentList = ses.createQuery("from Reimbursement where reimbursmentid = " + id, Reimbursement.class).list();
 		
 		if(reimbursmentList.size()==0) return null;
 		return reimbursmentList.get(0);
 	}
 	
 	//TODO
-	public boolean update(Reimbursement reimbursment) {return false;}
-	public boolean delete(Reimbursement reimbursment) {return false;}
+	public boolean update(Reimbursement reimbursement) {
+		Session ses = HibernateUtil.getSession();
+	
+		Transaction tx = ses.beginTransaction();
+		ses.update(reimbursement);
+		tx.commit();
+		return true;
+	}
+	
+	public boolean delete(Reimbursement reimbursement) {
+		Session ses = HibernateUtil.getSession();
+		Transaction transaction = ses.beginTransaction();
+		Query query = ses.createQuery("delete Reimbursement where id = :ID");
+		query.setParameter("ID", reimbursement.getReimbursmentid());
+		query.executeUpdate();
+		transaction.commit();
+		return true;
+	}
 }

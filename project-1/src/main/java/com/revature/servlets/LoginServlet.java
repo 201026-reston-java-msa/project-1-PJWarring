@@ -9,12 +9,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.revature.dao.UserDaoImpl;
 import com.revature.models.Role;
 import com.revature.util.miscUtil;
 
 public class LoginServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+	private static Logger log = Logger.getLogger(LoginServlet.class);
        
     public LoginServlet() {
         super();
@@ -24,13 +26,12 @@ public class LoginServlet extends HttpServlet {
 		HttpSession session = request.getSession(false);
 		response.setContentType("text/html");
 		
+		log.debug("doGet(LoginServlet)");
+		
 		if (session != null && session.getAttribute("username") != null) request.getRequestDispatcher("home").forward(request, response);
 		String redirect_reason = null;
 		if (session != null) redirect_reason = (String) session.getAttribute("redirect_reason");
 		
-		if (redirect_reason != null) {
-			//display the stuff here
-		}
 		request.getRequestDispatcher("login.html").forward(request, response);
 	}
 	
@@ -46,9 +47,11 @@ public class LoginServlet extends HttpServlet {
 			session.setAttribute("username", username);
 			Role userRole = userDao.selectByUsername(username).getRole();
 			session.setAttribute("role", userRole.getRole());
+			log.info("user " + username + " of role " + userRole + " has logged in.");
 			response.sendRedirect("home");
 		} else {
-			session.setAttribute("redirect_reason", "invalid credentials");
+			log.debug("login failed - likely due to invalid credentials");
+			response.setStatus(401);
 			response.sendRedirect("login");
 		}
 	}

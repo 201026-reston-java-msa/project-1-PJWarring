@@ -30,8 +30,11 @@ public class Driver {
 		RoleDaoImpl roleDao = new RoleDaoImpl();
 		StatusDaoImpl statusDao = new StatusDaoImpl();
 		TypeDaoImpl typeDao = new TypeDaoImpl();
-		ReimbursementDaoImpl reimbursmentDao = new ReimbursementDaoImpl();
+		ReimbursementDaoImpl reimbursementDao = new ReimbursementDaoImpl();
 		
-		System.out.println(roleDao.delete(new Role(4, "testRole")));
+		Reimbursement reimbursement = (Reimbursement) reimbursementDao.selectById(3);
+		reimbursement.setStatus(statusDao.selectByStatus("Approved"));
+		
+		reimbursementDao.update(reimbursement);
 	}
 }

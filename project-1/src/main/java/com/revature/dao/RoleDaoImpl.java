@@ -37,8 +37,11 @@ public class RoleDaoImpl {
 	
 	public boolean delete(Role role) {
 		Session ses = HibernateUtil.getSession();
+		Transaction transaction = ses.beginTransaction();
 		Query query = ses.createQuery("delete Role where id = :ID");
 		query.setParameter("ID", role.getRoleid());
-		return query.executeUpdate() != 0; //returns true if one or more things were deleted
+		query.executeUpdate();
+		transaction.commit();
+		return true;
 	}
 }

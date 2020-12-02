@@ -8,8 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 public class LogoutServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+	private static Logger log = Logger.getLogger(LogoutServlet.class);
        
     public LogoutServlet() {
         super();
@@ -21,8 +23,10 @@ public class LogoutServlet extends HttpServlet {
 			session.invalidate();
 		}
 		session = request.getSession();
+		
+		log.info("user " + (String) session.getAttribute("username") + " has logged out.");
+		
 		response.setContentType("text/html");
-		session.setAttribute("redirect_reason", "user logged out");
 		session.removeAttribute("username");
 		session.removeAttribute("role");
 		response.sendRedirect("login");

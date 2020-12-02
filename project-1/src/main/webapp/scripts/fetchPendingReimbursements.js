@@ -1,15 +1,17 @@
 `use strict`
 
-let displaySection = document.getElementById("reimbursement_display");
+//let displaySection = document.getElementById("reimbursement_display");
+let loadInfoButton = document.getElementById("loadInfoButton");
+
+//`https://pokeapi.co/api/v2/pokemon/1`);//
 
 async function getInfo() {
-    let response = await fetch(`./reimbursement_info`);
+    let response = await fetch(`./reimbursement_info_pending`);
     let reimbursements = await response.json();
-    for(let reimbursement of reimbursements) {
-        displaySection.addEventListener('load', () => {
-            infoPopulator(reimbursement)();
-        })
-    }
+    console.log(reimbursements)
+    loadInfoButton.addEventListener('click', () => {
+        infoPopulator(reimbursements)();
+    });
 }
 
 getInfo();
@@ -17,7 +19,7 @@ getInfo();
 function infoPopulator(reimbursement) {
     return async ()=> {
         displaySection.innerHTML = '';
-        let infoList = document.createAttribute('ul');
+        let infoList = document.createElement('ul');
 
         displaySection.appendChild(infoList);
         for (let key in reimbursement) {
