@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.lf5.LogLevel;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -11,6 +13,9 @@ import com.revature.models.Type;
 import com.revature.util.HibernateUtil;
 
 public class TypeDaoImpl {
+	
+	private static Logger log = Logger.getLogger(TypeDaoImpl.class);
+	
 	public boolean create(Type type) {
 		Session ses = HibernateUtil.getSession(); // capture the session
 		Transaction tx = ses.beginTransaction(); // perform an operation on DB
@@ -18,9 +23,10 @@ public class TypeDaoImpl {
 		ses.save(type); // use the save() session method to perform an insert operation
 		try {
 			tx.commit();
+			log.info("User created type " + type + ".");
 			return true;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			log.debug("User failed to create type " + type + ".");
 			e.printStackTrace();
 		}
 		return false;
@@ -51,7 +57,13 @@ public class TypeDaoImpl {
 		Query query = ses.createQuery("delete Type where id = :ID");
 		query.setParameter("ID", type.getTypeid());
 		query.executeUpdate();
-		transaction.commit();
-		return true;
+		try {
+			transaction.commit();
+			log.info("User deleted type " + type + ".");
+			return true;
+		} catch (Exception e) {
+			log.debug("User failed to delete type " + type + ".");
+			return false;
+		}
 	}
 }

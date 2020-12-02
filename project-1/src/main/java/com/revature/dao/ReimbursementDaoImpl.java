@@ -5,26 +5,32 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.postgresql.util.PGTimestamp;
 
 import com.revature.models.Reimbursement;
+import com.revature.servlets.HomeServlet;
 import com.revature.util.HibernateUtil;
 import com.revature.util.miscUtil;
 
 public class ReimbursementDaoImpl {
-	public boolean create(Reimbursement reimbursment) {
+	
+	private static Logger log = Logger.getLogger(ReimbursementDaoImpl.class);
+	
+	public boolean create(Reimbursement reimbursement) {
 		Session ses = HibernateUtil.getSession(); // capture the session
 		Transaction tx = ses.beginTransaction(); // perform an operation on DB
 		
-		reimbursment.setSubmitted(miscUtil.getCurrentTime());
-		ses.save(reimbursment); // use the save() session method to perform an insert operation
+		reimbursement.setSubmitted(miscUtil.getCurrentTime());
+		ses.save(reimbursement); // use the save() session method to perform an insert operation
 		try {
 			tx.commit();
+			log.info("created reimbursement " + reimbursement + ".");
 			return true;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			log.info("failed to create reimbursement " + reimbursement + ".");
 			e.printStackTrace();
 		}
 		return false;
@@ -45,8 +51,14 @@ public class ReimbursementDaoImpl {
 	
 		Transaction tx = ses.beginTransaction();
 		ses.update(reimbursement);
-		tx.commit();
-		return true;
+		try {
+			tx.commit();
+			log.info("updated reimbursement " + reimbursement + ".");
+			return true;
+		} catch (Exception e) {
+			log.debug("failed to update reimbursement " + reimbursement + ".");
+			return false;
+		}
 	}
 	
 	public boolean delete(Reimbursement reimbursement) {
@@ -55,7 +67,13 @@ public class ReimbursementDaoImpl {
 		Query query = ses.createQuery("delete Reimbursement where id = :ID");
 		query.setParameter("ID", reimbursement.getReimbursmentid());
 		query.executeUpdate();
-		transaction.commit();
-		return true;
+		try {
+			transaction.commit();
+			log.info("deleted reimbursement " + reimbursement + ".");
+			return true;
+		} catch (Exception e) {
+			log.debug("failed to delete reimbursement " + reimbursement + ".");
+			return false;
+		}
 	}
 }

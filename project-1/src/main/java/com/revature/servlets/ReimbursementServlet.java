@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.revature.dao.ReimbursementDaoImpl;
 import com.revature.dao.StatusDaoImpl;
 import com.revature.dao.TypeDaoImpl;
@@ -20,10 +22,14 @@ import com.revature.models.User;
 import com.revature.util.miscUtil;
 
 public class ReimbursementServlet extends HttpServlet {
+	
+	private static Logger log = Logger.getLogger(ReimbursementServlet.class);
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
 		response.setContentType("text/html");
+		
+		log.debug("user accessed doGet(ReimbursementServlet)");
 		
 		if (session != null && miscUtil.getUserAccessLevel((String) session.getAttribute("role")) >= 2) {
 			request.getRequestDispatcher("reimbursementForm.html").forward(request, response);
@@ -44,10 +50,10 @@ public class ReimbursementServlet extends HttpServlet {
 			session.setAttribute("redirect_reason", "user doesnt have access.");
 			response.sendRedirect("login");
 		} else {
-			if (miscUtil.getUserAccessLevel((String) session.getAttribute("role")) >= 2) {
+			if (miscUtil.getUserAccessLevel((String) session.getAttribute("role")) < 2) {
 				//the user cant access this file
+				log.debug("the user tried to submit a new reimbursement but couldnt - did not have proper crendtials.");
 				response.setStatus(403);
-				//tell the user they dont have access
 			}
 		}
 		
@@ -64,6 +70,7 @@ public class ReimbursementServlet extends HttpServlet {
 		
 		Reimbursement new_reimburesement = new Reimbursement(amount, submitted, null, description, author, null, status, type);
 		if (reimbursementDao.create(new_reimburesement)) {
+			log.info("user submitted new reimbursement.");
 			response.sendRedirect("home");
 		} else {
 			response.setStatus(400);

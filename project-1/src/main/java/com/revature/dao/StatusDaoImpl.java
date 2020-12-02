@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -11,6 +12,9 @@ import com.revature.models.Status;
 import com.revature.util.HibernateUtil;
 
 public class StatusDaoImpl {
+	
+	private static Logger log = Logger.getLogger(StatusDaoImpl.class);
+	
 	public boolean create(Status status) {
 		Session ses = HibernateUtil.getSession(); // capture the session
 		Transaction tx = ses.beginTransaction(); // perform an operation on DB
@@ -18,9 +22,10 @@ public class StatusDaoImpl {
 		ses.save(status); // use the save() session method to perform an insert operation
 		try {
 			tx.commit();
+			log.info("created status " + status + ".");
 			return true;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			log.info("failed to create status " + status + ".");
 			e.printStackTrace();
 		}
 		return false;
@@ -50,7 +55,13 @@ public class StatusDaoImpl {
 		Query query = ses.createQuery("delete Status where id = :ID");
 		query.setParameter("ID", status.getStatusid());
 		query.executeUpdate();
-		transaction.commit();
-		return true;
+		try {
+			transaction.commit();
+			log.info("deleted status " + status + ".");
+			return true;
+		} catch (Exception e) {
+			log.info("failed to delete status " + status + ".");
+			return false;
+		}
 	}
 }

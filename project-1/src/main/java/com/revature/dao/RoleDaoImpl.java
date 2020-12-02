@@ -4,13 +4,18 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.revature.models.Role;
+import com.revature.servlets.HomeServlet;
 import com.revature.util.HibernateUtil;
 
 public class RoleDaoImpl {
+	
+	private static Logger log = Logger.getLogger(RoleDaoImpl.class);
+	
 	public boolean create(Role role) {
 		Session ses = HibernateUtil.getSession(); // capture the session
 		Transaction tx = ses.beginTransaction(); // perform an operation on DB
@@ -18,9 +23,10 @@ public class RoleDaoImpl {
 		ses.save(role); // use the save() session method to perform an insert operation
 		try {
 			tx.commit();
+			log.info("created role " + role + ".");
 			return true;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			log.debug("failed to create role " + role + ".");
 			e.printStackTrace();
 		}
 		return false;
@@ -41,7 +47,13 @@ public class RoleDaoImpl {
 		Query query = ses.createQuery("delete Role where id = :ID");
 		query.setParameter("ID", role.getRoleid());
 		query.executeUpdate();
-		transaction.commit();
-		return true;
+		try {
+			transaction.commit();
+			log.info("deleted role " + role + ".");
+			return true;
+		} catch (Exception e) {
+			log.info("failed to delete role " + role + ".");
+			return false;
+		}
 	}
 }
